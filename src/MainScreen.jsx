@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, Pressable, Image, ScrollView, View, Text, Alert } from 'react-native';
+import { StyleSheet, TextInput, Pressable, Image, ScrollView, View, Text, Alert, Button } from 'react-native';
 import { requestGalleryPermission, requestCameraPermission } from './Permissions';
 import { pickImageFromGallery, captureImageWithCamera } from './Camera';
+import { View, Text } from 'react-native';
+import {
+  createStaticNavigation,
+  useNavigation,
+} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Button } from '@react-navigation/elements';
 
-export default function MainScreen() {
+
+export default function MainScreen({ navigation }) {
     const [mineralType, setMineralType] = useState('');
-
+    const navigation = useNavigation();
     const handleGalleryPick = async () => {
         const hasPermission = await requestGalleryPermission();
-        console.log(hasPermission);
         if (hasPermission) {
             const image = await pickImageFromGallery();
             console.log('Gallery image:', image);
@@ -29,18 +36,12 @@ export default function MainScreen() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            {/* Image Section */}
             <Image
                 source={require('../assets/mainimage.webp')}
                 style={styles.image}
             />
-
             <Text style={styles.title}>Discover Minerals</Text>
-
-            {/* Separator */}
             <View style={styles.separator} />
-
-            {/* Mineral Type Selection */}
             <View style={styles.mineralSelector}>
                 <Text style={styles.label}>Select Mineral Type</Text>
                 <TextInput
@@ -50,15 +51,19 @@ export default function MainScreen() {
                     style={styles.input}
                 />
             </View>
-
-            {/* Upload and Add Photo Buttons */}
-            <Pressable style={styles.uploadButton} onPress={() => handleGalleryPick()}>
+            <Pressable style={styles.uploadButton} onPress={handleGalleryPick}>
                 <Text style={styles.buttonText}>Upload Photo</Text>
             </Pressable>
-            
-            <Pressable style={styles.addButton} onPress={() => handleCameraCapture()}>
+            <Pressable style={styles.addButton} onPress={handleCameraCapture}>
                 <Text style={styles.buttonText}>Add Photo</Text>
             </Pressable>
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
+      <Button onPress={() => navigation.navigate('Details')}>
+        Go to Details
+      </Button>
+    </View>
+
         </ScrollView>
     );
 }
@@ -138,24 +143,9 @@ const styles = StyleSheet.create({
         color: '#333',
         marginBottom: 10,
     },
-    cameraContainer: {
-        width: '100%',
-        height: 300,
-        marginVertical: 20,
-        position: 'relative',
-    },
-    camera: {
-        flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-    },
-    captureButton: {
-        position: 'absolute',
-        bottom: 20,
-        alignSelf: 'center',
-        backgroundColor: '#FF6F61',
-        borderRadius: 50,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-    },
+    navButton: {
+        marginTop: 20,
+        marginBottom: 30,  // Butonun alt kısmına boşluk ekledim
+    }
+    
 });
